@@ -1,0 +1,41 @@
+<div class="container w-25">
+  <div class="row">
+    <div class="col-12">
+      <form [formGroup]="profileForm" (submit)="onSubmit()" class="border">
+        <div class="form-group">
+          <label for="name">Title</label>
+          <input id="name" class="form-control border-dark" type="text" formControlName="title" placeholder="Titles">
+        </div>
+        <div class="form-group mb-5">
+          <label for="Views">Views</label>
+          <input type="number" formControlName="views" class="form-control" id="Views" placeholder="Views">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Views</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of rowList">
+            <td >{{item.id}}</td>
+            <td >{{item.title}}</td>
+            <td >{{item.views}}</td>
+          </tr>
+     
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
