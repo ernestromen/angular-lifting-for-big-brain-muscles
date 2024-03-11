@@ -1,6 +1,6 @@
-const jsonServer = require('./node_modules/json-server');
+const jsonServer = require('json-server');
 const server = jsonServer.create();
-const router = jsonServer.router('./db.json'); // Your database file
+const router = jsonServer.router('db.json'); // Your database file
 const middlewares = jsonServer.defaults();
 
 // Add custom middleware for CORS

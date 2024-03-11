@@ -17,11 +17,13 @@ import { CommonModule } from '@angular/common'
 export class FormComponent {
 
   rowList: any[] = [];
+  lastID : number = 0;
 
+//Read about the use of tokkens in headers
 
-  headers = new HttpHeaders({
-    'X-XSRF-TOKEN': 'your-csrf-token-value-another-one' // Replace with your actual CSRF token
-  });
+  // headers = new HttpHeaders({
+  //   'X-XSRF-TOKEN': 'your-csrf-token-value-another-one' // Replace with your actual CSRF token
+  // });
 
 
   constructor(private AddTaskService: AddTaskService, private http: HttpClient) { }
@@ -35,6 +37,7 @@ export class FormComponent {
 
 
   profileForm = new FormGroup({
+    id:new FormControl(this.lastID + 1),
     title: new FormControl(''),
     views: new FormControl(''),
   });
@@ -42,32 +45,26 @@ export class FormComponent {
 
 
   onSubmit(): void {
-    const headers = new HttpHeaders({
+    // const headers = new HttpHeaders({
 
-      'X-XSRF-TOKEN': 'your-csrf-token-value-for-real-time-time-time-time' // Replace with your actual CSRF token
-    });
+    //   'X-XSRF-TOKEN': 'your-csrf-token-value-for-real-time-time-time-time' // Replace with your actual CSRF token
+    // });
 
     // Process checkout data here
     console.log(this.profileForm.value, 'here');
-
-    const formData = this.profileForm.value;
-
-    // this.AddTaskService.sendExample();
-
-    this.AddTaskService.postData(this.URL, formData, { headers: headers });
-
+    let formData = this.profileForm.value;
+    this.rowList.push(formData);
+    this.AddTaskService.postData(this.URL, formData);
   }
 
 
   fetchRows() {
 
-    this.http.get<any[]>(this.URL, { headers: this.headers }).subscribe(
+    this.http.get<any[]>(this.URL).subscribe(
       (data) => {
-
-        console.log(data, 'data2');
-        console.log(this.rowList, 'data2');
         this.rowList = data;
-        console.log(this.rowList, 'after');
+        this.lastID = Number(data[data.length-1].id);
+        this.profileForm.patchValue({id:this.lastID + 1});
 
       },
       (error) => {

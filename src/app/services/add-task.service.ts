@@ -9,9 +9,9 @@ export class AddTaskService {
   constructor(private http: HttpClient) { }
 
 
-  postData(apiUrl: string, formData: any, headers: object) {
+  postData(apiUrl: string, formData: any) {
 
-    return this.http.post<any>(apiUrl, formData, headers).subscribe(
+    return this.http.post<any>(apiUrl, formData).subscribe(
       (response: any) => {
 
         console.log(response);
