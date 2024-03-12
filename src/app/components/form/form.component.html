@@ -34,7 +34,7 @@
             <td >{{item.id}}</td>
             <td >{{item.title}}</td>
             <td >{{item.views}}</td>
-            <td ><button class="btn btn-danger">Delete</button></td>
+            <td ><button class="btn btn-danger" (click)="removeRowFromList(item.id)">Delete</button></td>
           </tr>
      
         </tbody>

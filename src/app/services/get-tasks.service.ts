@@ -4,13 +4,13 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class AddTaskService {
+export class GetTasksService {
 
   constructor(private http: HttpClient) { }
 
-  postData(apiUrl: string, formData: any) {
+  getAllTasksFromDB(URL: string) {
 
-    return this.http.post<any>(apiUrl, formData);
+    return this.http.get<any>(URL);
 
   }
 }

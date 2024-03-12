@@ -4,13 +4,13 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class AddTaskService {
+export class DeleteTaskService {
 
   constructor(private http: HttpClient) { }
 
-  postData(apiUrl: string, formData: any) {
+  deleteRow(id: number) {
 
-    return this.http.post<any>(apiUrl, formData);
+    return this.http.delete<any[]>(`http://localhost:3000/tasks/${id}`);
 
   }
 }
