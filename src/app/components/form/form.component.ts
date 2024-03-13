@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component,Renderer2,ElementRef,ViewChild   } from '@angular/core';
+import { FormControl, ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
 import { AddTaskService } from '../../services/add-task.service';
 import { DeleteTaskService } from '../../services/delete-task.service';
 import { GetTasksService } from '../../services/get-tasks.service';
@@ -18,13 +18,20 @@ import { of } from 'rxjs';
   providers: [AddTaskService, DeleteTaskService, GetTasksService],
 
 })
+
 export class FormComponent {
 
   rowList: any[] = [];
   lastID: number = 0;
+  postsToBeDeleted : any[] = [];
+  // public isChecked = false;
 
-
-  constructor(private addTaskService: AddTaskService, private deleteTaskService: DeleteTaskService, private getTasksService: GetTasksService, private http: HttpClient) { }
+  constructor(private addTaskService: AddTaskService,
+    private deleteTaskService: DeleteTaskService,
+    private getTasksService: GetTasksService,
+    private renderer: Renderer2,
+    private el: ElementRef,
+    private http: HttpClient) { }
 
 
   ngOnInit() {
@@ -60,7 +67,7 @@ export class FormComponent {
       catchError(err => of([]))
     ).subscribe(
 
-      (data) => {
+      (data : any) => {
         this.rowList = data;
         this.lastID = Number(data[data.length - 1].id);
         this.profileForm.patchValue({ id: this.lastID + 1 });
@@ -75,5 +82,22 @@ export class FormComponent {
       this.rowList = this.rowList.filter(e => e.id !== id);
     });
 
+  }
+
+  checkIfItemIsInToBeDeletedList(id: number,event: any){
+    // this.isChecked = !this.isChecked;
+    // console.log('this.isChecked value is: ',this.isChecked);
+    console.log(id,'this is the id i neeed to delete');
+    // this.renderer.addClass(this.el.nativeElement, 'wild');
+    console.log(event.target);
+    let posts = [];
+    posts = this.rowList.map(e=>{
+      if(e.id ==id){
+        return e;
+      }
+    });
+    console.log(posts,'posts');
+    // this.renderer.setAttribute(this.el.nativeElement, "checked", "checked");
+ 
   }
 }

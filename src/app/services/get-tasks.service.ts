@@ -8,7 +8,7 @@ export class GetTasksService {
 
   constructor(private http: HttpClient) { }
 
-  getAllTasksFromDB(URL: string) {
+  getAllTasksFromDB(URL: string) : any {
 
     return this.http.get<any>(URL);
 
