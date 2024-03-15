@@ -3,7 +3,6 @@ import { FormControl, ReactiveFormsModule, FormsModule, FormGroup } from '@angul
 import { AddTaskService } from '../../services/add-task.service';
 import { DeleteTaskService } from '../../services/delete-task.service';
 import { GetTasksService } from '../../services/get-tasks.service';
-import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http'; // Add this import
 import { CommonModule } from '@angular/common'
 import { catchError } from 'rxjs/operators';
@@ -24,16 +23,13 @@ export class FormComponent {
   rowList: any[] = [];
   lastID: number = 0;
   postsToBeDeleted: any[] = [];
-  // public isChecked = false;
   public postsIds: number[] = [];
 
 
   constructor(private addTaskService: AddTaskService,
     private deleteTaskService: DeleteTaskService,
     private getTasksService: GetTasksService,
-    private renderer: Renderer2,
-    private el: ElementRef,
-    private http: HttpClient) { }
+    ) { }
 
 
   ngOnInit() {
@@ -86,26 +82,23 @@ export class FormComponent {
 
   }
 
-  removeAllrowsFromlist(ids : number[]){
+  removeAllrowsFromlist(ids: number[]) {
+
     this.deleteTaskService.deleteAllRows(ids).subscribe(() => {
-      console.log('success');
+      ids.forEach(id=>{
+        this.rowList = this.rowList.filter(e => e.id !== id);
+
+      })
     });
   }
 
   checkIfItemIsInToBeDeletedList(id: number, event: any) {
-    // this.isChecked = !this.isChecked;
-    console.log(id, 'this is the id i neeed to delete');
-    console.log(event.target);
-    console.log(event.target.checked);
-
-    if(!event.target.checked){
-      this.postsIds = this.postsIds.filter((e)=> e !== id);
-      console.log(this.postsIds,'unchecked');
-    } 
+    if (!event.target.checked) {
+      this.postsIds = this.postsIds.filter((e) => e !== id);
+    }
 
     if (event.target.checked && !this.postsIds.includes(id)) {
       this.postsIds.push(id);
-      console.log(this.postsIds, 'posts');
     }
   }
 
