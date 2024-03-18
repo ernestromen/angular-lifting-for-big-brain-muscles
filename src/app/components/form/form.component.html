@@ -3,7 +3,7 @@
     <div class="col-12">
       <form [formGroup]="profileForm" (submit)="onSubmit()" class="border">
         <div class="form-group">
-          <input id="id" class="form-control border-dark d-none" type="number" formControlName="id" >
+          <input id="id" class="form-control border-dark d-none" type="number" formControlName="id">
         </div>
         <div class="form-group">
           <label for="name">Title</label>
@@ -19,6 +19,12 @@
     </div>
   </div>
 
+  <div *ngIf="errorDisplay" class="row mt-3 bg-danger text-light">
+    <div class="col-12">
+      <div> {{errorDisplayText}}</div>
+    </div>
+  </div>
+
   <div class="row mt-5">
     <div class="col-12">
       <table class="table">
@@ -27,22 +33,24 @@
             <th scope="col">ID</th>
             <th scope="col">Title</th>
             <th scope="col">Views</th>
-            <th scope="col"><button class="btn btn-danger" style="font-size: 10px;" (click)="removeAllrowsFromlist(postsIds)">Delete all</button></th>
+            <th scope="col"><button class="btn btn-danger" style="font-size: 10px;"
+                (click)="removeAllrowsFromlist(postsIds)">Delete all</button></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of rowList">
-            <td >{{item.id}}</td>
-            <td >{{item.title}}</td>
-            <td >{{item.views}}</td>
-            <td ><button class="btn btn-danger" (click)="removeRowFromList(item.id)">Delete</button></td>
+            <td>{{item.id}}</td>
+            <td>{{item.title}}</td>
+            <td>{{item.views}}</td>
+            <td><button class="btn btn-danger" (click)="removeRowFromList(item.id)">Delete</button></td>
             <td>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="item{{item.id}}" (change)="checkIfItemIsInToBeDeletedList(item.id,$event)" >
-            </div>
-          </td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="item{{item.id}}"
+                  (change)="checkIfItemIsInToBeDeletedList(item.id,$event)">
+              </div>
+            </td>
           </tr>
-     
+
         </tbody>
       </table>
     </div>
