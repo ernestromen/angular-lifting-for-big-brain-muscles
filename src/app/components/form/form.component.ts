@@ -5,7 +5,7 @@ import { DeleteTaskService } from '../../services/delete-task.service';
 import { GetTasksService } from '../../services/get-tasks.service';
 import { HttpClientModule } from '@angular/common/http'; // Add this import
 import { CommonModule } from '@angular/common'
-import { catchError,tap  } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Component({
@@ -53,28 +53,21 @@ export class FormComponent {
     // Process checkout data here
     let formData = this.profileForm.value;
 
-    this.addTaskService.postData(this.URL, formData)  .pipe(
+    this.addTaskService.postData(this.URL, formData).pipe(
       tap(() => {
         this.rowList.push(formData);
         console.log('Data posted successfully');
       }),
       catchError(error => {
-        // console.error('An error occurred while posting data:', error);
-        throw error; // Throw the error to stop execution
+        throw error;
       })
     )
-    .subscribe({
-      next: () => {
-        // This block is not needed if you only want to handle errors
-      },
-      error: error => {
-        // console.log('Error occurred, data not added to rowList.');
-        // console.log(error);
-        this.errorDisplay = true;
-        this.errorDisplayText = error.message;
-        // Handle error or show an error message to the user
-      }
-    });
+      .subscribe({
+        next: () => { },
+        error: error => {
+          this.showTheErrorOnApiFaliure(error);
+        }
+      });
 
   }
 
@@ -120,6 +113,16 @@ export class FormComponent {
     if (event.target.checked && !this.postsIds.includes(id)) {
       this.postsIds.push(id);
     }
+  }
+
+  showTheErrorOnApiFaliure(err: Error) {
+    this.errorDisplay = true;
+    this.errorDisplayText = err.message;
+    setTimeout(() => {
+      this.errorDisplay = false;
+      this.errorDisplayText = '';
+
+    }, 2000);
   }
 
 }
