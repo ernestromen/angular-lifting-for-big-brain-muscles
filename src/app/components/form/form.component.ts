@@ -1,4 +1,4 @@
-import { Component, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
 import { AddTaskService } from '../../services/add-task.service';
 import { DeleteTaskService } from '../../services/delete-task.service';
@@ -6,7 +6,6 @@ import { GetTasksService } from '../../services/get-tasks.service';
 import { HttpClientModule } from '@angular/common/http'; // Add this import
 import { CommonModule } from '@angular/common'
 import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'app-form',
@@ -75,16 +74,20 @@ export class FormComponent {
   fetchRows() {
 
     this.getTasksService.getAllTasksFromDB(this.URL).pipe(
-      catchError(err => of([]))
-    ).subscribe(
-
-      (data: any) => {
+      tap((data) => {
+        console.log(data);
         this.rowList = data;
-        this.lastID = data.length ? Number(data[data.length - 1].id) : 0;
-        this.profileForm.patchValue({ id: this.lastID + 1 });
-
-      },
-    );
+      }),
+      catchError(error => {
+        throw error;
+      })
+    )
+      .subscribe({
+        next: () => { },
+        error: error => {
+          this.showTheErrorOnApiFaliure(error);
+        }
+      });
   }
 
   removeRowFromList(id: number) {
