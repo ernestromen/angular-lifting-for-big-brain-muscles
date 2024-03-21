@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
 import { AddTaskService } from '../../services/add-task.service';
 import { DeleteTaskService } from '../../services/delete-task.service';
 import { GetTasksService } from '../../services/get-tasks.service';
-import { HttpClientModule } from '@angular/common/http'; // Add this import
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common'
 import { catchError, tap } from 'rxjs/operators';
 
@@ -17,14 +17,15 @@ import { catchError, tap } from 'rxjs/operators';
 
 })
 
-export class FormComponent {
+export class FormComponent implements OnInit {
 
-  rowList: any[] = [];
-  lastID: number = 0;
-  postsToBeDeleted: any[] = [];
+  public rowList: any[] = [];
+  public lastID: number = 0;
+  public postsToBeDeleted: any[] = [];
   public postsIds: number[] = [];
   public errorDisplay: boolean = false;
   public errorDisplayText: string = '';
+  public showTable = false;
 
   constructor(private addTaskService: AddTaskService,
     private deleteTaskService: DeleteTaskService,
@@ -34,6 +35,7 @@ export class FormComponent {
 
   ngOnInit() {
     this.fetchRows();
+    this.showTable = this.rowList.length === 0 ? false : true;
   }
 
   private URL: string = 'http://localhost:3000/tasks/';
@@ -49,13 +51,14 @@ export class FormComponent {
 
   onSubmit(): void {
 
-    // Process checkout data here
     let formData = this.profileForm.value;
 
     this.addTaskService.postData(this.URL, formData).pipe(
       tap(() => {
         this.rowList.push(formData);
-        console.log('Data posted successfully');
+        this.lastID = this.rowList.length ? Number(this.rowList[this.rowList.length - 1].id) : 0;
+        this.profileForm.patchValue({ id: this.lastID + 1 });
+        this.showTable = this.rowList.length === 0 ? false : true;
       }),
       catchError(error => {
         throw error;
@@ -72,10 +75,10 @@ export class FormComponent {
 
 
   fetchRows() {
-
     this.getTasksService.getAllTasksFromDB(this.URL).pipe(
       tap((data) => {
-        console.log(data);
+        this.lastID = data.length ? Number(data[data.length - 1].id) : 0;
+        this.profileForm.patchValue({ id: this.lastID + 1 });
         this.rowList = data;
       }),
       catchError(error => {
@@ -92,19 +95,43 @@ export class FormComponent {
 
   removeRowFromList(id: number) {
 
-    this.deleteTaskService.deleteRow(id).subscribe(() => {
-      this.rowList = this.rowList.filter(e => e.id !== id);
-    });
+    this.deleteTaskService.deleteRow(id).pipe(
+      tap(() => {
+        this.rowList = this.rowList.filter(e => e.id !== id);
+        this.showTable = this.rowList.length === 0 ? false : true;
+      }),
+      catchError(error => {
+        throw error;
+      })
+    )
+      .subscribe({
+        next: () => { },
+        error: error => {
+          this.showTheErrorOnApiFaliure(error);
 
+        }
+      });
   }
 
   removeAllrowsFromlist(ids: number[]) {
 
-    this.deleteTaskService.deleteAllRows(ids).subscribe(() => {
-      ids.forEach(id => {
-        this.rowList = this.rowList.filter(e => e.id !== id);
+    this.deleteTaskService.deleteAllRows(ids).pipe(
+      tap((data) => {
+        ids.forEach(id => {
+          this.rowList = this.rowList.filter(e => e.id !== id);
+        })
+        this.showTable = this.rowList.length === 0 ? false : true;
+      }),
+      catchError(error => {
+        throw error;
       })
-    });
+    )
+      .subscribe({
+        next: () => { },
+        error: error => {
+          this.showTheErrorOnApiFaliure(error);
+        }
+      });
     this.postsIds = [];
   }
 
